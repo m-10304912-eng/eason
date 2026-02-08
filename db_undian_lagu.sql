@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `undian` (
   CONSTRAINT `undian_ibfk_2` FOREIGN KEY (`id_kategori`) REFERENCES `kategori` (`id_kategori`),
   CONSTRAINT `undian_ibfk_3` FOREIGN KEY (`id_lagu`) REFERENCES `lagu` (`id_lagu`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
+  
 INSERT IGNORE INTO `undian` (`id_undi`, `nokp`, `id_kategori`, `id_lagu`) VALUES
 (1, '091023070189', 'K1', 'L1'),
 (2, '091023070189', 'K2', 'L5'),
