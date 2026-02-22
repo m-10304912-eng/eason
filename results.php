@@ -50,7 +50,7 @@ checkLogin();
 
 <main class="flex flex-1 justify-center py-8">
     <div class="flex flex-col max-w-[1200px] flex-1 px-4 sm:px-10">
-        <div class="flex flex-wrap justify-between items-end gap-3 p-4 mb-6">
+    <div class="flex flex-wrap justify-between items-end gap-3 p-4 mb-6">
             <div class="flex flex-col gap-3">
                 <div class="flex items-center gap-2">
                     <span class="relative flex h-3 w-3">
@@ -65,6 +65,13 @@ checkLogin();
                 Muat Semula
             </button>
         </div>
+        <!-- Search Bar -->
+        <form method="GET" class="mb-6">
+            <div class="flex items-center gap-2">
+                <input type="text" name="search" placeholder="Cari lagu..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>" class="border border-gray-300 rounded-lg px-4 py-2 w-full max-w-xs focus:border-primary focus:ring-primary" />
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded-lg font-bold hover:bg-primary/90 transition-all">Cari</button>
+            </div>
+        </form>
 
         <!-- Total Votes Stats -->
         <?php
@@ -94,6 +101,17 @@ checkLogin();
                 $totalCatVotesSql = "SELECT COUNT(*) as total FROM undian WHERE id_kategori = '$catId'";
                 $totalCatVotes = $conn->query($totalCatVotesSql)->fetch_assoc()['total'];
                 if ($totalCatVotes == 0) $totalCatVotes = 1; // Prevent division by zero
+
+                // Search filter
+                $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
+                $rankSql = "SELECT l.nama_lagu, l.id_lagu, COUNT(u.id_undi) as vote_count 
+                            FROM lagu l 
+                            LEFT JOIN undian u ON l.id_lagu = u.id_lagu AND u.id_kategori = '$catId' 
+                            WHERE l.nama_lagu LIKE '%$search%' 
+                            GROUP BY l.id_lagu 
+                            ORDER BY vote_count DESC";
+                $rankResult = $conn->query($rankSql);
+                $rank = 1;
             ?>
             <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover-card">
                 <h2 class="text-xl font-bold mb-6 border-b pb-2 neon-text text-primary"><?php echo htmlspecialchars($catName); ?></h2>

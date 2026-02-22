@@ -13,7 +13,10 @@ $categories = [];
 while($c = $cats->fetch_assoc()) $categories[] = $c;
 
 // Fetch Songs
-$songsResult = $conn->query("SELECT * FROM lagu");
+// Fetch Songs with search filter
+$search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
+$songsQuery = "SELECT * FROM lagu WHERE nama_lagu LIKE '%$search%'";
+$songsResult = $conn->query($songsQuery);
 $songs = [];
 while($s = $songsResult->fetch_assoc()) $songs[] = $s;
 
@@ -124,6 +127,14 @@ $status = $_GET['status'] ?? '';
         <?php endif; ?>
     </div>
 
+    <!-- Search Bar -->
+    <form method="GET" class="mb-6">
+        <div class="flex items-center gap-2">
+            <input type="text" name="search" placeholder="Cari lagu..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>" class="border border-gray-300 rounded-lg px-4 py-2 w-full max-w-xs focus:border-primary focus:ring-primary" />
+            <input type="hidden" name="cat" value="<?php echo htmlspecialchars($active_cat); ?>" />
+            <button type="submit" class="bg-primary text-white px-4 py-2 rounded-lg font-bold hover:bg-primary/90 transition-all">Cari</button>
+        </div>
+    </form>
     <!-- Category Tabs -->
     <div class="mb-8 border-b border-[#dbdfe6] flex overflow-x-auto no-scrollbar gap-2">
         <?php foreach ($categories as $cat): 

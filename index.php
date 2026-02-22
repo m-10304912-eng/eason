@@ -49,6 +49,7 @@ $displayName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : (isset($
             <div class="hidden md:flex items-center gap-9">
                 <a class="text-sm font-medium text-gray-700 hover:text-primary transition-colors nav-link" href="index.php">Laman Utama</a>
                 <a class="text-sm font-medium text-gray-700 hover:text-primary transition-colors nav-link" href="vote.php">Undi</a>
+                <a class="text-sm font-medium text-primary nav-link font-bold" href="results.php">Keputusan</a>
                 <?php if(isset($_SESSION['admin_logged_in'])): ?>
                 <a class="text-sm font-medium text-red-600 hover:text-red-800 transition-colors nav-link font-bold" href="admin.php">Panel Admin</a>
                 <?php endif; ?>
