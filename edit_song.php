@@ -60,11 +60,11 @@ if (isset($_POST['update_song'])) {
         <form method="post" class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lagu</label>
-                <input type="text" name="nama_lagu" value="<?php echo htmlspecialchars($song['nama_lagu']); ?>" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500" required>
+                <input type="text" name="nama_lagu" value="<?php echo htmlspecialchars($song['nama_lagu']); ?>" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500" required title="Sila isikan ruang ini">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Nama Fail Video</label>
-                <input type="text" name="video" value="<?php echo htmlspecialchars($song['video']); ?>" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500" required>
+                <input type="text" name="video" value="<?php echo htmlspecialchars($song['video']); ?>" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500" required title="Sila isikan ruang ini">
             </div>
             <div class="flex gap-4 pt-4">
                 <button type="submit" name="update_song" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Simpan</button>

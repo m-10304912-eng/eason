@@ -38,6 +38,9 @@ $displayName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : (isset($
     </style>
 </head>
 <body class="bg-background-light font-display text-[#111318]">
+    <div class="text-center py-6">
+        <h1 class="text-2xl md:text-3xl font-bold neon-text text-primary mb-2">Sistem Pengundian Pertandingan Lagu Kelas Terbaik di SMJK Chung Ling</h1>
+    </div>
 <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
     <!-- Navigation -->
     <header class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-[#f0f2f4] bg-white/90 backdrop-blur-md px-10 py-4 shadow-sm">

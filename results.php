@@ -31,6 +31,10 @@ checkLogin();
 </head>
 <body class="bg-background-light font-display text-[#111318]">
 
+<div class="text-center py-6">
+    <h1 class="text-2xl md:text-3xl font-bold neon-text text-primary mb-2">Sistem Pengundian Pertandingan Lagu Kelas Terbaik di SMJK Chung Ling</h1>
+</div>
+
 <header class="flex items-center justify-between whitespace-nowrap border-b border-gray-200 bg-white px-10 py-3 sticky top-0 z-50 shadow-sm">
     <div class="flex items-center gap-4">
         <div class="text-primary size-8 flex items-center justify-center">
@@ -61,6 +65,14 @@ checkLogin();
                 </div>
                 <h1 class="text-4xl font-black leading-tight tracking-[-0.033em] neon-text">Keputusan Pertandingan</h1>
             </div>
+            <button onclick="window.print()" class="flex items-center justify-center rounded-lg h-10 px-4 bg-green-600 text-white text-sm font-bold shadow-md hover:bg-green-700 transition-all hover:scale-105">
+                <span class="material-symbols-outlined mr-2">print</span> Cetak
+            </button>
+            <?php if(isset($_SESSION['admin_logged_in'])): ?>
+            <a href="export_csv.php" class="flex items-center justify-center rounded-lg h-10 px-4 bg-yellow-500 text-white text-sm font-bold shadow-md hover:bg-yellow-600 transition-all hover:scale-105 ml-2">
+                <span class="material-symbols-outlined mr-2">download</span> Export CSV
+            </a>
+            <?php endif; ?>
             <button onclick="window.location.reload()" class="flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold shadow-md hover:bg-primary/90 transition-all hover:scale-105">
                 Muat Semula
             </button>
@@ -87,69 +99,106 @@ checkLogin();
         </div>
 
         <div class="flex flex-col gap-8 p-4">
-             <!-- Category Breakdown -->
+            <!-- Separate Menengah Atas and Menengah Rendah -->
             <?php
-            // Get all categories data first
             $catSql = "SELECT * FROM kategori";
             $catRes = $conn->query($catSql);
-            
+            $atas = [];
+            $rendah = [];
             while($cat = $catRes->fetch_assoc()) {
-                $catId = $cat['id_kategori'];
-                $catName = $cat['kategori'];
-
-                // Get total votes for this category
-                $totalCatVotesSql = "SELECT COUNT(*) as total FROM undian WHERE id_kategori = '$catId'";
-                $totalCatVotes = $conn->query($totalCatVotesSql)->fetch_assoc()['total'];
-                if ($totalCatVotes == 0) $totalCatVotes = 1; // Prevent division by zero
-
-                // Search filter
-                $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
-                $rankSql = "SELECT l.nama_lagu, l.id_lagu, COUNT(u.id_undi) as vote_count 
-                            FROM lagu l 
-                            LEFT JOIN undian u ON l.id_lagu = u.id_lagu AND u.id_kategori = '$catId' 
-                            WHERE l.nama_lagu LIKE '%$search%' 
-                            GROUP BY l.id_lagu 
-                            ORDER BY vote_count DESC";
-                $rankResult = $conn->query($rankSql);
-                $rank = 1;
+                if (stripos($cat['kategori'], 'atas') !== false) {
+                    $atas[] = $cat;
+                } else if (stripos($cat['kategori'], 'rendah') !== false) {
+                    $rendah[] = $cat;
+                }
+            }
             ?>
-            <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover-card">
-                <h2 class="text-xl font-bold mb-6 border-b pb-2 neon-text text-primary"><?php echo htmlspecialchars($catName); ?></h2>
-                
-                <div class="space-y-6">
-                    <?php
+            <div class="mb-10">
+                <h2 class="text-2xl font-bold mb-4 neon-text text-green-700">Menengah Atas</h2>
+                <?php foreach($atas as $cat): 
+                    $catId = $cat['id_kategori'];
+                    $catName = $cat['kategori'];
+                    $totalCatVotesSql = "SELECT COUNT(*) as total FROM undian WHERE id_kategori = '$catId'";
+                    $totalCatVotes = $conn->query($totalCatVotesSql)->fetch_assoc()['total'];
+                    if ($totalCatVotes == 0) $totalCatVotes = 1;
+                    $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
                     $rankSql = "SELECT l.nama_lagu, l.id_lagu, COUNT(u.id_undi) as vote_count 
                                 FROM lagu l 
-                                LEFT JOIN undian u ON l.id_lagu = u.id_lagu AND u.id_kategori = '$catId'
+                                LEFT JOIN undian u ON l.id_lagu = u.id_lagu AND u.id_kategori = '$catId' 
+                                WHERE l.nama_lagu LIKE '%$search%' 
                                 GROUP BY l.id_lagu 
                                 ORDER BY vote_count DESC";
-
                     $rankResult = $conn->query($rankSql);
                     $rank = 1;
-
-                    while($row = $rankResult->fetch_assoc()) {
-                        $percent = round(($row['vote_count'] / $totalCatVotes) * 100, 1);
-                    ?>
-                    <div class="flex flex-col gap-2">
-                        <div class="flex justify-between items-end">
-                            <div class="flex items-center gap-3">
-                                <span class="flex items-center justify-center size-6 rounded-full bg-gray-100 text-xs font-bold text-gray-500">#<?php echo $rank++; ?></span>
-                                <h3 class="font-bold text-[#111318]"><?php echo htmlspecialchars($row['nama_lagu']); ?></h3>
+                ?>
+                <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover-card mb-6">
+                    <h3 class="text-xl font-bold mb-6 border-b pb-2 neon-text text-primary"><?php echo htmlspecialchars($catName); ?></h3>
+                    <div class="space-y-6">
+                        <?php while($row = $rankResult->fetch_assoc()): $percent = round(($row['vote_count'] / $totalCatVotes) * 100, 1); ?>
+                        <div class="flex flex-col gap-2">
+                            <div class="flex justify-between items-end">
+                                <div class="flex items-center gap-3">
+                                    <span class="flex items-center justify-center size-6 rounded-full bg-gray-100 text-xs font-bold text-gray-500">#<?php echo $rank++; ?></span>
+                                    <h3 class="font-bold text-[#111318]"><?php echo htmlspecialchars($row['nama_lagu']); ?></h3>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-lg font-bold text-primary neon-text"><?php echo $row['vote_count']; ?></span>
+                                    <span class="text-xs text-gray-500 font-medium uppercase min-w-[60px] inline-block">Undi</span>
+                                </div>
                             </div>
-                            <div class="text-right">
-                                <span class="text-lg font-bold text-primary neon-text"><?php echo $row['vote_count']; ?></span>
-                                <span class="text-xs text-gray-500 font-medium uppercase min-w-[60px] inline-block">Undi</span>
+                            <div class="w-full bg-gray-100 h-3 rounded-full overflow-hidden">
+                                <div class="bg-primary h-full rounded-full transition-all duration-1000 shadow-[0_0_8px_#135bec]" style="width: <?php echo $percent; ?>%"></div>
                             </div>
+                            <p class="text-xs text-right text-gray-400 font-medium"><?php echo $percent; ?>%</p>
                         </div>
-                        <div class="w-full bg-gray-100 h-3 rounded-full overflow-hidden">
-                            <div class="bg-primary h-full rounded-full transition-all duration-1000 shadow-[0_0_8px_#135bec]" style="width: <?php echo $percent; ?>%"></div>
-                        </div>
-                        <p class="text-xs text-right text-gray-400 font-medium"><?php echo $percent; ?>%</p>
+                        <?php endwhile; ?>
                     </div>
-                    <?php } ?>
                 </div>
+                <?php endforeach; ?>
             </div>
-            <?php } ?>
+            <div>
+                <h2 class="text-2xl font-bold mb-4 neon-text text-blue-700">Menengah Rendah</h2>
+                <?php foreach($rendah as $cat): 
+                    $catId = $cat['id_kategori'];
+                    $catName = $cat['kategori'];
+                    $totalCatVotesSql = "SELECT COUNT(*) as total FROM undian WHERE id_kategori = '$catId'";
+                    $totalCatVotes = $conn->query($totalCatVotesSql)->fetch_assoc()['total'];
+                    if ($totalCatVotes == 0) $totalCatVotes = 1;
+                    $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
+                    $rankSql = "SELECT l.nama_lagu, l.id_lagu, COUNT(u.id_undi) as vote_count 
+                                FROM lagu l 
+                                LEFT JOIN undian u ON l.id_lagu = u.id_lagu AND u.id_kategori = '$catId' 
+                                WHERE l.nama_lagu LIKE '%$search%' 
+                                GROUP BY l.id_lagu 
+                                ORDER BY vote_count DESC";
+                    $rankResult = $conn->query($rankSql);
+                    $rank = 1;
+                ?>
+                <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover-card mb-6">
+                    <h3 class="text-xl font-bold mb-6 border-b pb-2 neon-text text-primary"><?php echo htmlspecialchars($catName); ?></h3>
+                    <div class="space-y-6">
+                        <?php while($row = $rankResult->fetch_assoc()): $percent = round(($row['vote_count'] / $totalCatVotes) * 100, 1); ?>
+                        <div class="flex flex-col gap-2">
+                            <div class="flex justify-between items-end">
+                                <div class="flex items-center gap-3">
+                                    <span class="flex items-center justify-center size-6 rounded-full bg-gray-100 text-xs font-bold text-gray-500">#<?php echo $rank++; ?></span>
+                                    <h3 class="font-bold text-[#111318]"><?php echo htmlspecialchars($row['nama_lagu']); ?></h3>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-lg font-bold text-primary neon-text"><?php echo $row['vote_count']; ?></span>
+                                    <span class="text-xs text-gray-500 font-medium uppercase min-w-[60px] inline-block">Undi</span>
+                                </div>
+                            </div>
+                            <div class="w-full bg-gray-100 h-3 rounded-full overflow-hidden">
+                                <div class="bg-primary h-full rounded-full transition-all duration-1000 shadow-[0_0_8px_#135bec]" style="width: <?php echo $percent; ?>%"></div>
+                            </div>
+                            <p class="text-xs text-right text-gray-400 font-medium"><?php echo $percent; ?>%</p>
+                        </div>
+                        <?php endwhile; ?>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
         </div>
     </div>
 </main>

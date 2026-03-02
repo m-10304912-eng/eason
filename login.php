@@ -24,6 +24,9 @@ if (isset($_SESSION['user_id']) || isset($_SESSION['admin_logged_in'])) {
     </style>
 </head>
 <body class="bg-white flex items-center justify-center min-h-screen p-4">
+        <div class="text-center py-6">
+            <h1 class="text-2xl md:text-3xl font-bold neon-text text-primary mb-2">Sistem Pengundian Pertandingan Lagu Kelas Terbaik di SMJK Chung Ling</h1>
+        </div>
     
     <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 hover-card transition-all duration-300">
         <div class="text-center mb-8">
@@ -37,13 +40,20 @@ if (isset($_SESSION['user_id']) || isset($_SESSION['admin_logged_in'])) {
             $password = $_POST['password'];
 
             // Admin Logic
-            $adminCheck = $conn->query("SELECT * FROM admins WHERE username='admin' AND password='$password'");
-            if ($nokp === 'admin' && $adminCheck->num_rows > 0) {
-                 $_SESSION['admin_logged_in'] = true;
-                 // Redirect to Normal User Site first as requested
-                 echo "<script>window.location.href = 'index.php';</script>";
-                 exit();
-            }
+              $adminCheck = $conn->query("SELECT * FROM admins WHERE username='admin' AND password='$password'");
+              if ($nokp === 'admin' && $adminCheck->num_rows > 0) {
+                  $_SESSION['admin_logged_in'] = true;
+                  echo "<script>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Log Masuk Admin Berjaya!',
+                        text: 'Selamat datang Admin.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => { window.location.href = 'index.php'; });
+                  </script>";
+                  exit();
+              }
 
             // Voter Logic
             $sql = "SELECT * FROM pengundi WHERE nokp='$nokp' AND password='$password'";
@@ -72,12 +82,12 @@ if (isset($_SESSION['user_id']) || isset($_SESSION['admin_logged_in'])) {
         <form method="post" class="space-y-5">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">No. Kad Pengenalan / Admin ID</label>
-                <input type="text" name="nokp" required class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-3 px-4 transition-shadow" placeholder="Contoh: 091023070189 atau admin">
+                <input type="text" name="nokp" required title="Sila isikan ruang ini" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-3 px-4 transition-shadow" placeholder="Contoh: 091023070189 atau admin">
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Kata Laluan</label>
-                <input type="password" name="password" required class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-3 px-4 transition-shadow" placeholder="Kata Laluan">
+                <input type="password" name="password" required title="Sila isikan ruang ini" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-3 px-4 transition-shadow" placeholder="Kata Laluan">
             </div>
 
             <button type="submit" name="login" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg btn-neon transition-all duration-300">

@@ -54,6 +54,9 @@ $status = $_GET['status'] ?? '';
 </style>
 </head>
 <body class="bg-background-light font-display text-[#111318] min-h-screen relative">
+    <div class="text-center py-6">
+        <h1 class="text-2xl md:text-3xl font-bold neon-text text-primary mb-2">Sistem Pengundian Pertandingan Lagu Kelas Terbaik di SMJK Chung Ling</h1>
+    </div>
 
 <!-- FEEDBACK MODALS OVERLAY -->
 <?php if ($status == 'success'): ?>
@@ -130,7 +133,7 @@ $status = $_GET['status'] ?? '';
     <!-- Search Bar -->
     <form method="GET" class="mb-6">
         <div class="flex items-center gap-2">
-            <input type="text" name="search" placeholder="Cari lagu..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>" class="border border-gray-300 rounded-lg px-4 py-2 w-full max-w-xs focus:border-primary focus:ring-primary" />
+            <input type="text" name="search" placeholder="Cari lagu..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>" class="border border-gray-300 rounded-lg px-4 py-2 w-full max-w-xs focus:border-primary focus:ring-primary" title="Sila isikan ruang ini" />
             <input type="hidden" name="cat" value="<?php echo htmlspecialchars($active_cat); ?>" />
             <button type="submit" class="bg-primary text-white px-4 py-2 rounded-lg font-bold hover:bg-primary/90 transition-all">Cari</button>
         </div>

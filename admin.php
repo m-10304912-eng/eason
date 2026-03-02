@@ -1,3 +1,6 @@
+    <div class="text-center py-6">
+        <h1 class="text-2xl md:text-3xl font-bold neon-text text-primary mb-2">Sistem Pengundian Pertandingan Lagu Kelas Terbaik di SMJK Chung Ling</h1>
+    </div>
 <?php
 session_start();
 include 'db_connect.php';
@@ -169,9 +172,9 @@ $participation_rate = $total_voters > 0 ? round(($unique_voters / $total_voters)
                 }
                 ?>
                 <form method="post" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <input type="text" name="id_lagu" placeholder="ID (Contoh: L1)" class="border-[#dbdfe6] rounded-lg text-sm focus:ring-primary focus:border-primary" required>
-                    <input type="text" name="nama_lagu" placeholder="Nama Lagu" class="border-[#dbdfe6] rounded-lg text-sm focus:ring-primary focus:border-primary" required>
-                    <input type="text" name="video" placeholder="Video (Contoh: file.mp4)" class="border-[#dbdfe6] rounded-lg text-sm focus:ring-primary focus:border-primary" required>
+                    <input type="text" name="id_lagu" placeholder="ID (Contoh: L1)" class="border-[#dbdfe6] rounded-lg text-sm focus:ring-primary focus:border-primary" required title="Sila isikan ruang ini">
+                    <input type="text" name="nama_lagu" placeholder="Nama Lagu" class="border-[#dbdfe6] rounded-lg text-sm focus:ring-primary focus:border-primary" required title="Sila isikan ruang ini">
+                    <input type="text" name="video" placeholder="Video (Contoh: file.mp4)" class="border-[#dbdfe6] rounded-lg text-sm focus:ring-primary focus:border-primary" required title="Sila isikan ruang ini">
                     <button type="submit" name="add_song" class="bg-primary text-white font-bold py-2 rounded-lg hover:bg-blue-700 shadow-md transition-all hover:scale-105">Tambah Lagu</button>
                 </form>
             </div>
